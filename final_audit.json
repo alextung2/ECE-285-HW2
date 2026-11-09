@@ -1,0 +1,66 @@
+{
+  "dataset": {
+    "images": 81444,
+    "unique_crops": 80694,
+    "duplicates": 750,
+    "training": 75694,
+    "held_out": 5000,
+    "split_reproduced": true,
+    "exact_crop_leakage": false
+  },
+  "training": {
+    "epochs": 10,
+    "steps": 5910,
+    "finite_logs": true,
+    "parameter_counts_match": true
+  },
+  "independent_metrics": {
+    "initial.pt": {
+      "independent_FID": 471.8670732585881,
+      "FID_difference": -9.77996705842088e-09,
+      "independent_IS": 1.001302577649057,
+      "IS_difference": 2.220446049250313e-16
+    },
+    "generator_epoch_01.pt": {
+      "independent_FID": 333.5616388189993,
+      "FID_difference": -6.650680006714538e-12,
+      "independent_IS": 1.6757395821286243,
+      "IS_difference": -6.661338147750939e-16
+    },
+    "generator_epoch_05.pt": {
+      "independent_FID": 151.98898896610046,
+      "FID_difference": -2.6147972675971687e-12,
+      "independent_IS": 2.2798018456859315,
+      "IS_difference": 0.0
+    },
+    "generator_epoch_10.pt": {
+      "independent_FID": 95.2965488376334,
+      "FID_difference": -6.366462912410498e-12,
+      "independent_IS": 2.8916249055443806,
+      "IS_difference": -4.440892098500626e-16
+    }
+  },
+  "image_provenance": {
+    "generated": {
+      "epoch_1": {
+        "max_pixel_difference": 1,
+        "mean_pixel_difference": 4.6279814880740476e-05
+      },
+      "epoch_10": {
+        "max_pixel_difference": 1,
+        "mean_pixel_difference": 6.882639136110122e-05
+      }
+    },
+    "held_out_grid_exact_match": true
+  },
+  "real_feature_cache": {
+    "rechecked_examples": 5,
+    "max_feature_difference": 0.0026718974113464355,
+    "max_probability_difference": 0.0009494125843048096,
+    "max_relative_L2_error": 0.0009291364694945514,
+    "minimum_cosine_similarity": 0.9999995827674866,
+    "max_probability_L1_error": 0.00220077414996922,
+    "comparison": "tolerant to cuDNN benchmark/batch-size numerical variation; not bit-identical"
+  },
+  "passed": true
+}

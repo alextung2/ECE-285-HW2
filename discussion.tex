@@ -1,5 +1,7 @@
 \paragraph{Observed behavior.}
-Final samples show larger color regions and rough landscape-like arrangements,
-but ambiguous objects, blur, and grid artifacts persist. FID falls from 471.87
-to 95.30 and IS rises from 1.001 to 2.892, supporting learning under this
-protocol. Fluctuating losses do not establish convergence.
+Final outputs show coarse landscape-like arrangements, with blur and grid
+artifacts. Mean generator loss falls from \FirstGLoss\ (epoch 1) to
+\FinalGLoss\ (epoch 10); discriminator loss changes from \FirstDLoss\ to
+\FinalDLoss. FID improves from \InitialFID\ to \FinalFID\ and IS from
+\InitialIS\ to \FinalIS. These trends support learning, but do not establish
+convergence or complete style coverage.

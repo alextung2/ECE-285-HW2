@@ -19,6 +19,20 @@ Ten epochs produced 5,910 updates. Final torchvision-feature FID was
 95.29655; whole-set IS was 2.89162; ten-split IS was 2.86096 +/- 0.09317.
 The final report is exactly two pages and was rendered for visual inspection.
 
+## Final verification
+
+`final_audit.py` independently recalculates FID with symmetric covariance
+eigendecomposition and IS directly from probabilities. It also reproduces
+the data split and exact-crop deduplication, checks every loss-log row,
+verifies model parameter counts, regenerates displayed samples, and spot-checks
+the held-out Inception feature cache. `final_audit.json` records the passed
+checks and measured numerical differences. In the completed audit, all four
+FID values agreed within 1e-8 and IS values within 1e-14. CUDA re-extraction
+and image regeneration are checked with numerical tolerances because cuDNN
+benchmarking is enabled; the audit does not claim bit-identical inference.
+Run `python final_audit.py` after completing the full local experiment below
+(it needs the local data, feature caches, and full training checkpoint).
+
 ## Reproduce
 
 Use Python 3.12. A CUDA-enabled PyTorch install is recommended. The original

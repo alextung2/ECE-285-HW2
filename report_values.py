@@ -7,6 +7,11 @@ def main():
     with (ROOT/'losses.csv').open() as f: rows=list(csv.DictReader(f))
     final=metrics['generator_epoch_10.pt']; protocol=metrics['protocol']
     values={'TrainCount':f"{config['train_count']:,}",'RawCount':f"{len(manifest['names']):,}",'BadCount':str(len(manifest['errors'])),'DuplicateCount':str(len(manifest['duplicates_at_64px'])),'UniqueCount':f"{config['train_count']+config['test_count']:,}",'StepCount':f'{len(rows):,}','FinalFID':f"{final['FID']:.2f}",'FinalIS':f"{final['IS_global']:.3f}",'RealIS':f"{protocol['real_IS_global']:.3f}"}
+    values.update({'InitialFID':f"{metrics['initial.pt']['FID']:.2f}",'InitialIS':f"{metrics['initial.pt']['IS_global']:.3f}"})
+    for prefix,epoch in [('First',1),('Final',config['epochs'])]:
+        e=[r for r in rows if int(r['epoch'])==epoch]
+        for network in ['G','D']:
+            values[prefix+network+'Loss']=f"{sum(float(r[network+'_loss']) for r in e)/len(e):.2f}"
     lines=['\\newcommand{\\'+k+'}{'+v+'}' for k,v in values.items()]
     entries=[]
     for ck,label in [('initial.pt','Untrained'),('generator_epoch_01.pt','Epoch 1'),('generator_epoch_05.pt','Epoch 5'),('generator_epoch_10.pt','Epoch 10')]:
