@@ -1,0 +1,43 @@
+{
+  "initial.pt": {
+    "FID": 471.8670732683681,
+    "IS_global": 1.0013025776490567,
+    "IS_10split_mean": 1.0013001680374145,
+    "IS_10split_std": 2.86963378985358e-05,
+    "seconds": 26.49014925956726
+  },
+  "generator_epoch_01.pt": {
+    "FID": 333.56163881900596,
+    "IS_global": 1.675739582128625,
+    "IS_10split_mean": 1.6721238255500794,
+    "IS_10split_std": 0.03185721582077486,
+    "seconds": 24.151761054992676
+  },
+  "generator_epoch_05.pt": {
+    "FID": 151.98898896610308,
+    "IS_global": 2.2798018456859315,
+    "IS_10split_mean": 2.2658703565597533,
+    "IS_10split_std": 0.03842426459069094,
+    "seconds": 24.059601545333862
+  },
+  "generator_epoch_10.pt": {
+    "FID": 95.29654883763976,
+    "IS_global": 2.891624905544381,
+    "IS_10split_mean": 2.8609617710113526,
+    "IS_10split_std": 0.09317107861974101,
+    "seconds": 24.34769034385681
+  },
+  "protocol": {
+    "real_count": 5000,
+    "fake_count": 5000,
+    "real_IS_global": 7.377632741945855,
+    "feature_dimensions": 2048,
+    "weights": "torchvision Inception_V3_Weights.IMAGENET1K_V1",
+    "resize": "64x64 RGB -> uint8 round -> PIL bilinear 299x299",
+    "normalization": "ImageNet mean/std; torchvision transform_input=True",
+    "evaluation_seed": 1285,
+    "split_seed": 285,
+    "FID_implementation": "ignite.metrics.FID with identity feature extractor on avgpool features",
+    "IS_implementation": "ignite.metrics.InceptionScore with identity feature extractor on softmax probabilities"
+  }
+}

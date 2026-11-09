@@ -1,0 +1,20 @@
+{
+  "seed": 285,
+  "batch_size": 128,
+  "latent_dim": 100,
+  "learning_rate": 0.0002,
+  "betas": [
+    0.5,
+    0.999
+  ],
+  "epochs": 10,
+  "train_count": 75694,
+  "test_count": 5000,
+  "G_parameters": 3576704,
+  "D_parameters": 2765568,
+  "torch": "2.6.0+cu118",
+  "device": "NVIDIA GeForce RTX 3080 Ti Laptop GPU",
+  "drop_last": true,
+  "precision": "float32",
+  "cudnn_benchmark": true
+}

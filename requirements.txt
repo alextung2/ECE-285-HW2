@@ -1,0 +1,8 @@
+torch==2.6.0
+torchvision==0.21.0
+pytorch-ignite==0.5.3
+numpy==2.2.2
+Pillow==11.1.0
+scipy==1.15.1
+matplotlib==3.10.0
+requests>=2.32,<3

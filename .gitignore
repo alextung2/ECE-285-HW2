@@ -1,0 +1,8 @@
+wikiart.zip
+images.npy
+real_inception.npz
+features_epoch_*.npz
+__pycache__/
+*.aux
+*.out
+*.log

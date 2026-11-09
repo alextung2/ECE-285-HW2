@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage[final,nonatbib]{neurips_2024}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,booktabs,graphicx,url}
+\usepackage[hidelinks]{hyperref}
+\makeatletter
+\renewcommand{\@noticestring}{ECE 285: Homework 2.}
+\makeatother
+\input{results.tex}
+\title{Generating WikiArt Paintings with a DCGAN}
+\author{ECE 285 HW2 \quad Code: \url{https://github.com/alextung2/ECE-285-HW2}}
+\begin{document}
+\maketitle
+\begin{abstract}
+A DCGAN trained from scratch on \TrainCount\ WikiArt images generates
+$64\times64$ RGB paintings. After ten epochs, evaluation against 5,000
+held-out images gives FID \FinalFID\ and Inception Score \FinalIS\ under
+the stated torchvision-Inception protocol. Samples exhibit coarse structure,
+blur, and residual grid artifacts.
+\end{abstract}
+
+\section{Data and model}
+The assigned Kaggle archive~[1] contains \RawCount\ images, all successfully
+decoded. Each is converted to RGB, bilinearly resized to a 64-pixel shorter
+side, and center-cropped to $64\times64$. Removing \DuplicateCount\ identical
+crops (SHA-256) leaves \UniqueCount\ images. A seeded permutation reserves
+5,000 for evaluation and \TrainCount\ for training. Pixels are scaled to
+$[-1,1]$; style labels are ignored. The split is image-level, with no
+artist-level or perceptual-near-duplicate separation.
+
+The DCGAN~[2] generator maps $z\sim\mathcal N(0,I_{100})$ through five
+$4\times4$ transposed convolutions: channels $512,256,128,64,3$, spatial sizes
+$4,8,16,32,64$. Hidden layers use batch normalization and ReLU; the output
+uses tanh. The discriminator uses $4\times4$ convolutions with channels
+$64,128,256,512,1$, LeakyReLU($0.2$), batch normalization in the three
+intermediate blocks, and a final logit. Generator/discriminator parameter
+counts are 3,576,704/2,765,568.
+
+\section{Optimization and training dynamics}
+With $D$ denoting the sigmoid of the discriminator logit, the objectives are
+\begin{align*}
+L_D&=-\mathbb E_x\log D(x)-\mathbb E_z\log[1-D(G(z))],&
+L_G&=-\mathbb E_z\log D(G(z)).
+\end{align*}
+\noindent Stable BCE-with-logits implements both losses. Each step updates $D$
+using real and detached fake images, then $G$ using the updated $D$.
+Both use Adam, learning rate $2\times10^{-4}$, $\beta=(0.5,0.999)$, and batch
+size 128 (incomplete batches dropped). Convolution weights start at
+$\mathcal N(0,0.02^2)$; batch-norm scales at $\mathcal N(1,0.02^2)$ and biases
+at zero. Seed 285, float32, and an RTX 3080 Ti Laptop GPU are used for
+\StepCount\ updates. No pretrained generator or augmentation is used.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\linewidth]{loss_curve.pdf}
+\caption{Actual per-step BCE losses (faint) and trailing 100-step means (solid).
+The discriminator loss sums real and fake terms. Adversarial losses need not
+decrease monotonically and do not establish perceptual quality.}
+\end{figure}
+
+\newpage
+\section{Generated images and quantitative evaluation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{comparison.pdf}
+\caption{First 16 held-out images and first 16 fixed-noise outputs.
+Generated panels share latent vectors; examples are not selected by visual quality.}
+\end{figure}
+
+Evaluation uses Ignite 0.5.3 FID and InceptionScore, adapting~[3]. Each checkpoint
+uses 5,000 Gaussian latents (seed 1285, reset per checkpoint) and the same 5,000
+held-out images. Both inputs are mapped to $[0,1]$, identically rounded to 8-bit
+RGB, PIL-bilinearly resized to $299\times299$, and ImageNet-normalized.
+Frozen torchvision Inception-v3 (\texttt{IMAGENET1K\_V1},
+\texttt{transform\_input=True}) supplies 2,048-dimensional average-pool features
+for FID, explicitly replacing Ignite's default 1,000 probabilities~[4].
+IS uses softmax probabilities. Lower FID and higher IS are preferable.
+
+\begin{table}[h]
+\centering
+\caption{Measured results under one fixed protocol. Whole-set IS is Ignite's
+direct output; split IS is mean $\pm$ standard deviation over ten groups of 500.}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Checkpoint & FID $\downarrow$ & IS, whole set $\uparrow$ & IS, ten splits $\uparrow$\\
+\midrule
+\MetricRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\input{discussion.tex}
+
+\paragraph{Limitations.}
+Torchvision-based FID is not directly comparable to TensorFlow/clean-fid
+benchmarks. Finite-sample bias and a single training seed limit inference.
+Split-IS deviation measures sample-group variation, not training-run uncertainty.
+ImageNet classes weakly reflect artistic quality (real-set IS: \RealIS).
+Cropping removes composition and $64\times64$ limits detail. Losses do not
+establish absence of memorization or complete mode coverage. More training,
+multiple seeds, and perceptual duplicate checks would strengthen the study.
+Code, splits, logs, and checkpoints are saved; cuDNN benchmarking prevents
+guaranteed bit-identical CUDA reproduction.
+
+\vspace{-3pt}
+\section*{References}
+\vspace{-3pt}
+{\footnotesize\raggedright
+\noindent [1] steubk. \emph{WikiArt}. Kaggle.
+\url{https://www.kaggle.com/datasets/steubk/wikiart}.\\
+\noindent [2] A. Radford, L. Metz, and S. Chintala. \emph{Unsupervised Representation
+Learning with Deep Convolutional Generative Adversarial Networks}. ICLR, 2016.
+\url{https://arxiv.org/abs/1511.06434}.\\
+\noindent [3] PyTorch-Ignite. \emph{GAN evaluation using FID and IS}.
+\url{https://pytorch-ignite.ai/blog/gan-evaluation-with-fid-and-is/}.\\
+\noindent [4] PyTorch-Ignite. \emph{FID metric documentation}.
+\url{https://docs.pytorch.org/ignite/generated/ignite.metrics.FID.html}.\par
+}
+\end{document}
